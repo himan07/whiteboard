@@ -1,0 +1,28 @@
+.create_room_form {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: auto;
+    position: relative;
+    top: 25%;
+  }
+  
+  .typo {
+    font-weight: bold;
+    font-size: 1.8rem;
+    text-align: center !important;
+    margin-top: 10px !important;
+  }
+  
+  .form_group {
+    margin: 80px 50px;
+  }
+  
+  .btns_form {
+    display: flex;
+    justify-content: right;
+    align-items: center;
+    gap: 10px;
+    margin-top: 10px !important;
+  }
+  
