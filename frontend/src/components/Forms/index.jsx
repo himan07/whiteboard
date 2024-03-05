@@ -5,7 +5,7 @@ import "./index.css";
 
 const Forms = ({ uuid, socket, setUser, setMyPeer }) => {
   return (
-    <div className="forms">
+    <div className="forms" style={{marginTop:"50px"}}>
       <Grid container spacing={2}>
       <Grid item xs={6}>
         <CreateRoomForm

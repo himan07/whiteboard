@@ -1,10 +1,10 @@
 .create_room_form {
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     margin: auto;
     position: relative;
-    top: 25%;
   }
   
   .typo {

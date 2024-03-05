@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Route, Routes } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import io from "socket.io-client";
-import HomePage from "./pages/Home/HomePage";
+import Navbar from "./components/Navbar/Navbar";
 
 import "./App.css";
 
@@ -24,7 +24,6 @@ const App = () => {
   const [users, setUsers] = useState([]);
   const [peers, setPeers] = useState({});
   const [myPeer, setMyPeer] = useState(null);
-  const [openVideo, setOpenVideo] = useState(true);
 
   const videoGrid = useRef(null);
 
@@ -38,9 +37,7 @@ const App = () => {
   };
 
   const connectToNewUser = (userId, name, stream) => {
-    console.log(myPeer, stream);
     const call = myPeer.call(userId, stream);
-    console.log("call", call);
     const div = document.createElement("div");
     div.id = userId;
     const video = document.createElement("video");
@@ -69,7 +66,6 @@ const App = () => {
         console.log("userJoined error");
       }
     });
-
     socket.on("allUsers", (data) => {
       setUsers(data);
     });
@@ -103,11 +99,11 @@ const App = () => {
 
   return (
     <div className="container">
+      <Navbar user={user} />
       <ToastContainer />
       <Routes>
-        <Route path="/" element={<HomePage />} />
         <Route
-          path="/User/forms"
+          path="/"
           element={
             <Forms
               uuid={uuid}
@@ -121,40 +117,9 @@ const App = () => {
           path="/:roomId"
           element={
             <>
-              <button
-                onClick={() => setOpenVideo(!openVideo)}
-                style={{
-                  position: "absolute",
-                  top: "10px",
-                  right: "10px",
-                  zIndex: "100",
-                  backgroundColor: "white",
-                  border: "none",
-                  padding: "10px",
-                  borderRadius: "5px",
-                  cursor: "pointer",
-                }}
-              >
-                Open Video
-              </button>
-              <div
-                className="video-grid h-100 position-fixed top-0 "
-                style={{
-                  zIndex: 1000,
-                  right: openVideo ? "0" : "-100%",
-                }}
-                ref={videoGrid}
-              >
-                <button
-                  className="btn btn-light  "
-                  onClick={() => setOpenVideo(false)}
-                >
-                  Close
-                </button>
-              </div>
               <RoomPage
                 connectToNewUser={connectToNewUser}
-                addVideoStream={addVideoStream}
+                // addVideoStream={addVideoStream}
                 videoGrid={videoGrid}
                 user={user}
                 myPeer={myPeer}

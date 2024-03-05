@@ -19,16 +19,15 @@ const CreateRoomForm = ({ uuid, socket, setUser, setMyPeer }) => {
 
   const handleCreateRoom = (e) => {
     e.preventDefault();
-
     const myPeer = new Peer(undefined, {
-      host: "/",
-      port: 5001,
+      host: "localhost",
+      port: 5001, 
       path: "/",
       secure: false,
     });
+    
 
     setMyPeer(myPeer);
-
     myPeer.on("open", (id) => {
       const roomData = {
         name,
@@ -44,12 +43,35 @@ const CreateRoomForm = ({ uuid, socket, setUser, setMyPeer }) => {
     });
     myPeer.on("error", (err) => {
       console.log("peer connection error", err);
-      this.myPeer.reconnect();
+      myPeer.reconnect();
     });
   };
 
   return (
     <div className="create_room_form">
+       {/* <Typography
+            variant="h4"
+            style={{
+              fontWeight: "bold",
+              fontSize: "2.4rem",
+              marginTop: "40px",
+            }}
+          >
+            Welcome to the CollaboraSketch
+          </Typography>
+          <Typography
+            variant="h4"
+            style={{
+              fontSize: "1.2rem",
+              fontStyle: "normal",
+              margin: "10px 20px 50px 0px",
+              textAlign: "left",
+            }}
+          >
+            Draw, sketch, and illustrate together in real-time. Share ideas
+            visually, collaborate on diagrams, or just have fun doodling with
+            your team or friends.
+          </Typography> */}
       <Box
         height={400}
         width={500}

@@ -5,16 +5,16 @@ import "./index.css";
 import WhiteBoard from "../../components/Whiteboard";
 import Chat from "../../components/ChatBar";
 import { toast } from "react-toastify";
-import { Button } from "@mui/material";
+import { Button, Grid, IconButton } from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
+import VideoCall from "../../components/VideoCall/VideoCall";
 
 const RoomPage = ({
   user,
   socket,
-  users,
   videoGrid,
   setUsers,
   myPeer,
-  setPeers,
   connectToNewUser,
   addVideoStream,
 }) => {
@@ -25,9 +25,8 @@ const RoomPage = ({
   const [color, setColor] = useState("black");
   const [elements, setElements] = useState([]);
   const [history, setHistory] = useState([]);
-  const [openedUserTab, setOpenedUserTab] = useState(false);
   const [openedChatTab, setOpenedChatTab] = useState(false);
-  const [stream, setStream] = useState(null);
+  const [openVideo, setOpenVideo] = useState(true);
 
   const handleClearCanvas = () => {
     const canvas = canvasRef.current;
@@ -38,21 +37,31 @@ const RoomPage = ({
   };
 
   const undo = () => {
-    setHistory((prevHistory) => [
-      ...prevHistory,
-      elements[elements.length - 1],
-    ]);
-    setElements((prevElements) =>
-      prevElements.slice(0, prevElements.length - 1)
-    );
+    if (elements.length > 0) {
+      setHistory((prevHistory) => [
+        ...prevHistory,
+        elements[elements.length - 1],
+      ]);
+      setElements((prevElements) => {
+        const updatedElements = [...prevElements];
+        updatedElements.pop();
+        return updatedElements;
+      });
+    }
   };
 
   const redo = () => {
-    setElements((prevElements) => [
-      ...prevElements,
-      history[history.length - 1],
-    ]);
-    setHistory((prevHistory) => prevHistory.slice(0, prevHistory.length - 1));
+    if (history.length > 0) {
+      setElements((prevElements) => [
+        ...prevElements,
+        history[history.length - 1],
+      ]);
+      setHistory((prevHistory) => {
+        const updatedHistory = [...prevHistory];
+        updatedHistory.pop();
+        return updatedHistory;
+      });
+    }
   };
 
   const adduserIdInP = async (p, call, div, video) => {
@@ -70,19 +79,13 @@ const RoomPage = ({
         audio: true,
       })
       .then((stream) => {
-        setStream(stream);
         const div = document.createElement("div");
-        div.id = user.userId;
+        div.id = user?.userId;
         const p = document.createElement("p");
-        p.innerText = user.name;
+        p.innerText = user?.name;
         div.append(p);
-        const myVideo = document.createElement("video");
-
-        addVideoStream(div, myVideo, stream);
-
         myPeer.on("call", (call) => {
           console.log("call", call);
-
           call.answer(stream);
           const div = document.createElement("div");
           div.id = call.peer;
@@ -104,77 +107,26 @@ const RoomPage = ({
         .then((stream) => {
           console.log(`${data.name} ${data.userId} joined the room`);
           toast.info(`${data.name} joined the room`);
-          console.log("working");
           connectToNewUser(data.userId, data.name, stream);
-          console.log("working");
         });
     });
   }, []);
 
+  const handleOpenVideo = () => {
+    setOpenVideo(!openVideo);
+    setOpenedChatTab(false);
+  };
+
+  const handleOpenChatTab = () => {
+    setOpenedChatTab(!openedChatTab);
+    setOpenVideo(false);
+  };
+
   return (
-    <div>
-      <Button
-        variant="contained"
-        type="button"
-        className="btn btn-dark"
-        style={{
-          display: "block",
-          position: "absolute",
-          top: "5%",
-          left: "3%",
-          height: "40px",
-          width: "100px",
-        }}
-        onClick={() => setOpenedUserTab(true)}
-      >
-        Users
-      </Button>
-      <button
-        type="button"
-        className="btn btn-primary"
-        style={{
-          display: "block",
-          position: "absolute",
-          top: "5%",
-          left: "10%",
-          height: "40px",
-          width: "100px",
-        }}
-        onClick={() => setOpenedChatTab(true)}
-      >
-        Chats
-      </button>
-      {openedUserTab && (
-        <div
-          className="position-fixed top-0 h-100 text-white bg-dark"
-          style={{ width: "250px", left: "0%" }}
-        >
-          <button
-            type="button"
-            onClick={() => setOpenedUserTab(false)}
-            className="btn btn-light btn-block w-100 mt-5"
-          >
-            Close
-          </button>
-          <div className="w-100 mt-5 pt-5">
-            {users.map((usr, index) => (
-              <p key={index * 999} className="my-2 text-center w-100 ">
-                {usr.name} {user && user.userId === usr.userId && "(You)"}
-              </p>
-            ))}
-          </div>
-        </div>
-      )}
-      {openedChatTab && (
-        <Chat setOpenedChatTab={setOpenedChatTab} socket={socket} />
-      )}
-      <h1 className="text-center py-4">
-        White Board Sharing App{" "}
-        <span className="text-primary">[Users Online : {users.length}]</span>
-      </h1>
-      {user?.presenter && (
-        <div className="col-md-10 mx-auto px-5 mb-3 d-flex align-items-center jusitfy-content-center">
-          <div className="d-flex col-md-2 justify-content-center gap-1">
+    <Grid container style={{ overflowY: "hidden !important" }}>
+      <Grid item xs={9}>
+        <div className="col-md-10 mt-4 mx-auto px-5 mb-3 d-flex align-items-center jusitfy-content-center">
+          <div className="d-flex col-md-2 justify-content-center gap-2">
             <div className="d-flex gap-1 align-items-center">
               <label htmlFor="pencil">Pencil</label>
               <input
@@ -246,21 +198,54 @@ const RoomPage = ({
             </button>
           </div>
         </div>
-      )}
-
-      <div className="col-md-10 mx-auto mt-4 canvas-box">
-        <WhiteBoard
-          canvasRef={canvasRef}
-          ctxRef={ctxRef}
-          elements={elements}
-          setElements={setElements}
-          color={color}
-          tool={tool}
-          user={user}
-          socket={socket}
-        />
-      </div>
-    </div>
+        <div className="col-md-11 mx-auto mt-4 canvas-box">
+          <WhiteBoard
+            canvasRef={canvasRef}
+            ctxRef={ctxRef}
+            elements={elements}
+            setElements={setElements}
+            color={color}
+            tool={tool}
+            user={user}
+            socket={socket}
+          />
+        </div>
+      </Grid>
+      <Grid item xs={3}>
+        <div
+          style={{ margin: "30px 0px 20px 0px", display: "flex", gap: "20px" }}
+        >
+          <Button
+            variant="contained"
+            className="chat_btn"
+            onClick={handleOpenVideo}
+            style={{ backgroundColor: " #003399" }}
+          >
+            {openVideo ? "Close video chat" : "Open video chat"}
+          </Button>
+          <Button
+            variant="contained"
+            className="chat_btn"
+            onClick={handleOpenChatTab}
+            style={{ backgroundColor: "gray" }}
+          >
+            {openedChatTab ? "Close Chat Box" : "Open chat Box"}
+          </Button>
+        </div>
+        {openedChatTab && (
+          <Chat
+            setOpenedChatTab={setOpenedChatTab}
+            socket={socket}
+            openVideo={openVideo}
+          />
+        )}
+        {openVideo && (
+          <div style={{ margin: "0px 20px 0px 10px" }}>
+            <VideoCall videoGrid={videoGrid} />
+          </div>
+        )}
+      </Grid>
+    </Grid>
   );
 };
 

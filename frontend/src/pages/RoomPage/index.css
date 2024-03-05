@@ -1,3 +1,7 @@
 .canvas-box {
   height: 500px;
 }
+
+.chat_btn {
+  text-transform: capitalize !important;
+}

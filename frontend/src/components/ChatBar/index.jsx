@@ -1,8 +1,11 @@
 import { useEffect, useState } from "react";
+import { Button, TextField } from "@mui/material";
+import "./index.css";
 
-const Chat = ({ setOpenedChatTab, socket }) => {
+const Chat = ({ socket }) => {
   const [chat, setChat] = useState([]);
   const [message, setMessage] = useState("");
+  const [openVideo, setOpenVideo] = useState(true);
 
   useEffect(() => {
     socket.on("messageResponse", (data) => {
@@ -13,53 +16,75 @@ const Chat = ({ setOpenedChatTab, socket }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (message.trim() !== "") {
-      setChat((prevChats) => [...prevChats, { message, name: "You" }]);
+      setChat((prevChats) => [...prevChats, { message, name: "" }]);
       socket.emit("message", { message });
       setMessage("");
     }
   };
 
   return (
-    <div
-      className="position-fixed top-0 h-100 text-white bg-dark"
-      style={{ width: "400px", left: "0%" }}
-    >
-      <button
-        type="button"
-        onClick={() => setOpenedChatTab(false)}
-        className="btn btn-light btn-block w-100 mt-5"
-      >
-        Close
-      </button>
-      <div
-        className="w-100 mt-5 p-2 border  border-1 border-white rounded-3 "
-        style={{ height: "70%" }}
-      >
-        {chat.map((msg, index) => (
-          <p
-            key={index * 999}
-            className="my-2 text-center w-100 py-2 border border-left-0 border-right-0  "
-          >
-            {msg.name}: {msg.message}
-          </p>
-        ))}
-      </div>
-      <form onSubmit={handleSubmit} className="w-100 mt-4 d-flex rounded-3 ">
-        <input
-          type="text"
-          placeholder="Enter message"
-          className="h-100 border-0 rounded-0 py-2 px-4"
+    <>
+      <div className="chat_container">
+        <h5 style={{ margin: "0px 10px 30px 10px" }}>In-room messages</h5>
+        <div
           style={{
-            width: "90%",
+            height: window.innerHeight - 290,
+            overflow: "auto",
           }}
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-        />
-        <button type="submit" className="btn btn-primary rounded-0">
-          Send
-        </button>
-      </form>
-    </div>
+        >
+          {chat.map((msg, index) => (
+            <p
+              key={index * 999}
+              style={{
+                textAlign: msg.name?.length === 0 ? "right" : "left",
+                margin: "20px 10px 10px 5px ",
+                maxWidth: "100%",
+                fontSize: "14px",
+                fontWeight: "bold",
+              }}
+            >
+              <span>{msg.name?.length === 0 ? "You" : msg.name}</span>
+              <br />
+              <span
+                style={{
+                  fontSize: "14px",
+                  fontWeight: 400,
+                  color: "#336699",
+                }}
+              >
+                {msg.message}
+              </span>
+            </p>
+          ))}
+        </div>
+        <form
+          onSubmit={handleSubmit}
+          style={{
+            display: "flex",
+            justifyContent: "space-around",
+            gap: "5px",
+            marginBottom: 0,
+          }}
+        >
+          <TextField
+            variant="outlined"
+            placeholder="Enter Message"
+            size="small"
+            fullWidth
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+          />
+          <Button
+            variant="contained"
+            size="small"
+            type="submit"
+            style={{ textTransform: "capitalize", backgroundColor: " #003399" }}
+          >
+            Send
+          </Button>
+        </form>
+      </div>
+    </>
   );
 };
 

@@ -27,10 +27,8 @@ const WhiteBoard = ({
         <img
           src={img}
           alt="Real time white board image shared by presenter"
-          // className="w-100 h-100"
           style={{
             height: window.innerHeight * 2,
-            width: "285%",
           }}
         />
       </div>
@@ -215,7 +213,14 @@ const WhiteBoard = ({
       onMouseDown={handleMouseDown}
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
-      className="border border-dark border-3 h-100 w-100 overflow-hidden"
+      style={{
+        border: "2px solid black",
+        maxHeight: "100vh",
+        height: "72vh",
+        maxWidth: "100%",
+        width: "95%",
+        overflow: "hidden",
+      }}
     >
       <canvas ref={canvasRef} />
     </div>
