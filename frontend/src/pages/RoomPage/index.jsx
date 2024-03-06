@@ -229,6 +229,7 @@ const RoomPage = ({
             onClick={handleOpenChatTab}
             style={{ backgroundColor: "gray" }}
           >
+            
             {openedChatTab ? "Close Chat Box" : "Open chat Box"}
           </Button>
         </div>
