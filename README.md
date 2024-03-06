@@ -1,12 +1,3 @@
-# Prerequisites
-1. NodeJs
-2. Git
-3. Code Editor
-4. React Basics
-5. Browser
-6. Yarn (if not installed use command `npm i -g yarn` in cmd or terminal)
-
-
 # Installation Guide
 1. Download or Clone this repo
 2. Unzip the repo (if downloaded)
@@ -23,10 +14,10 @@
 
 ![alt text](sketch.png)
 
--video call screen
+Video call screen
 
 ![alt text](screen.png)
 
--Chat screen
+Chat screen
 
 ![alt text](<chat screen.png>)
