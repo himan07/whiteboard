@@ -21,3 +21,6 @@ Video call screen
 Chat screen
 
 ![alt text](<chat screen.png>)
+
+Notification when User leave or join the room
+![alt text](notification.png)
