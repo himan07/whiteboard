@@ -12,11 +12,11 @@
 2. Frontend:-
   - open frontend directory in terminal or cmd and type `yarn dev` to run development server
 
-![alt text](sketch.png)
+![alt text](screen.png)
 
 Video call screen
+![alt text](sketch.png)
 
-![alt text](screen.png)
 
 Chat screen
 
