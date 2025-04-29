@@ -6,18 +6,8 @@ const { Server } = require("socket.io");
 
 const { addUser, getUser, removeUser } = require("./utils/users");
 
-const { PeerServer } = require("peer");
-
-const peerServer = PeerServer({
-  host: "localhost",
-  port: 5001,
-  path: "/",
-});
-
 const io = new Server(server);
-// server.on("upgrade", (request, socket, head) => {});
 
-// routes
 app.get("/", (req, res) => {
   res.send(
     "This is mern realtime board sharing app official server by fullyworld web tutorials"
